@@ -1,11 +1,24 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useThemeStore } from "../stores/themeStore";
 
 const themeStore = useThemeStore();
+const searchInput = ref<HTMLInputElement | null>(null);
+
+const focusSearch = (event: KeyboardEvent) => {
+  if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+    event.preventDefault();
+    searchInput.value?.focus();
+  }
+};
 
 onMounted(() => {
   themeStore.syncTheme();
+  window.addEventListener("keydown", focusSearch);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", focusSearch);
 });
 </script>
 
@@ -21,6 +34,7 @@ onMounted(() => {
           />
         </router-link>
         <input
+          ref="searchInput"
           type="text"
           placeholder="Search..."
           class="h-7 px-3 py-1.5 dark:text-white bg-white dark:bg-black dark:placeholder:text-white rounded-md outline-1 -outline-offset-1 outline-gray-600 dark:outline-white focus:outline-1 focus:-outline-offset-1 focus:outline-primary"

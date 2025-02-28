@@ -1,28 +1,22 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
 import { usePostStore } from "../stores/postStore";
 
 const postStore = usePostStore();
-const post = reactive({
+const formData = reactive({
   title: "",
-  description: "",
-  tag: "",
+  body: "",
 });
-function handlePost() {
-  if (!post.title || !post.description || !post.tag) {
-    alert("Please enter all fields");
-    return;
-  }
 
+function addPost() {
+  if (!formData.title || !formData.body) return;
   postStore.addPost({
-    title: post.title,
-    description: post.description,
-    tag: post.tag,
+    title: formData.title,
+    body: formData.body,
+    userId: 1,
   });
-
-  post.title = '',
-  post.description = '',
-  post.tag = ''
+  formData.title = "";
+  formData.body = "";
 }
 </script>
 
@@ -32,7 +26,7 @@ function handlePost() {
       Create a post
     </h1>
     <form
-      @submit.prevent="handlePost"
+      @submit.prevent="addPost"
       class="sm:w-full sm:max-w-md sm:mx-auto mt-8 space-y-4"
     >
       <label
@@ -44,40 +38,23 @@ function handlePost() {
         type="text"
         id="title"
         name="title"
-        v-model="post.title"
+        v-model="formData.title"
         placeholder="Title"
         class="w-full px-3 py-1.5 rounded-md text-base text-gray-900 dark:text-gray-200 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary"
       />
       <label
-        for="description"
+        for="body"
         class="block text-sm/6 font-medium text-gray-900 dark:text-gray-200"
         >Description</label
       >
       <textarea
-        id="description"
-        name="description"
+        id="body"
+        name="body"
+        v-model="formData.body"
         rows="5"
-        v-model="post.description"
         placeholder="Description"
         class="block w-full px-3 py-1.5 rounded-md text-base text-gray-900 dark:text-gray-200 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary"
       ></textarea>
-      <label
-        for="tag"
-        class="block text-sm/6 font-medium text-gray-900 dark:text-gray-200"
-        >Tag</label
-      >
-      <select
-        id="tag"
-        name="tag"
-        v-model="post.tag"
-        placeholder="Tag"
-        class="block w-full px-3 py-1.5 rounded-md text-base text-gray-900 dark:text-gray-200 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary"
-      >
-        <option disabled value="">Please select one</option>
-        <option>A</option>
-        <option>B</option>
-        <option>C</option>
-      </select>
       <button
         type="submit"
         class="block w-full px-3 py-1.5 rounded-md text-white bg-primary hover:bg-blue-400"
